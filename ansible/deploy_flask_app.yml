@@ -1,0 +1,70 @@
+---
+- name: Deploy Flask App Docker Image
+  hosts: localhost
+  become: true
+  vars:
+    image_name: ahosny333/linux-resources-app
+    version: v3
+    previous_version: v2
+    container_name: flask_app
+    app_port: 5000
+  vars_files:
+    - credentials.yml
+  tasks:
+    - name: Log in to Docker Hub
+      ansible.builtin.shell: >
+        echo "{{ docker_password }}" | docker login --username "{{ docker_username }}" --password-stdin
+      register: login_result
+      failed_when: "'Login Succeeded' not in login_result.stdout"
+
+    - name: Pull Docker image from Docker Hub
+      ansible.builtin.shell: >
+        docker pull {{ image_name }}:{{ version }}
+      register: pull_result
+      ignore_errors: yes
+
+    - name: Stop and remove existing container (if running)
+      ansible.builtin.shell: >
+        docker stop {{ container_name }} || true &&
+        docker rm {{ container_name }} || true
+
+    - name: Run the Docker container
+      ansible.builtin.shell: >
+        docker run -d --name {{ container_name }} -p {{ app_port }}:5000 {{ image_name }}:{{ version }}
+      register: run_result
+
+    - name: Check if container is running
+      ansible.builtin.shell: >
+        docker ps --filter "name={{ container_name }}" --filter "status=running" --format "{{ '{{' }}.ID{{ '}}' }}"
+      register: container_status
+
+    - name: Test application endpoint
+      ansible.builtin.uri:
+        url: http://localhost:{{ app_port }}/resources
+        method: GET
+      register: app_test
+      ignore_errors: yes
+
+    - name: Report deployment success
+      ansible.builtin.debug:
+        msg: "Deployment succeeded! Application is running and accessible."
+
+      when: container_status.stdout != "" and app_test.status == 200
+
+    - name: Report deployment failure
+      ansible.builtin.debug:
+        msg: "Deployment failed! Application is not accessible or container is not running."
+
+      when: container_status.stdout == "" or app_test.status != 200
+
+    - name: Rollback to the previous version
+      ansible.builtin.shell: >
+        docker stop {{ container_name }} || true &&
+        docker rm {{ container_name }} || true &&
+        docker run -d --name {{ container_name }} -p {{ app_port }}:5000 {{ image_name }}:{{ previous_version }}
+      when: container_status.stdout == "" or app_test.status != 200
+
+    - name: Report rollback status
+      ansible.builtin.debug:
+        msg: "Rollback to the previous version was successful!"
+      when: container_status.stdout == "" or app_test.status != 200
