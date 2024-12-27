@@ -1,0 +1,73 @@
+/* General body styling */
+body {
+  font-family: 'Roboto', Arial, sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  background-color: #f0f2f5;
+  color: #444;
+}
+
+/* Header styling */
+h1 {
+  text-align: center;
+  color: #2c3e50;
+  margin: 20px 0;
+}
+
+/* Container styling */
+.container {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Resource card */
+.resource {
+  margin-bottom: 20px;
+  padding: 15px;
+  border-radius: 5px;
+  border: 1px solid #e1e4e8;
+  background-color: #f9f9f9;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.resource:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Resource title styling */
+.resource strong {
+  display: block;
+  font-size: 18px;
+  color: #34495e;
+  margin-bottom: 10px;
+}
+
+/* Resource list styling */
+.resource ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.resource ul li {
+  padding: 5px 0;
+  border-bottom: 1px solid #ddd;
+}
+
+.resource ul li:last-child {
+  border-bottom: none;
+}
+
+/* Footer styling */
+footer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #888;
+}
