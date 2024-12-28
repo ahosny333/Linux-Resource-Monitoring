@@ -51,7 +51,7 @@ Before you start, ensure the following:
 Clone the project repository to your local machine:
 
 ```
-git clone https://github.com/ahosny333/linux-resources-app.git
+git clone https://github.com/ahosny333/Linux-Resource-Monitoring.git
 cd linux-resources-app
 ```
 ## 2. Build and Test the Docker Image
